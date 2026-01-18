@@ -174,7 +174,11 @@ func (o *Options) fromDSN(in string) error {
 		o.Auth.Username = dsn.User.Username()
 		o.Auth.Password, _ = dsn.User.Password()
 	}
-	o.Addr = append(o.Addr, strings.Split(dsn.Host, ",")...)
+	addr := dsn.Host
+	if dsn.Scheme == "http" || dsn.Scheme == "https" {
+		addr += dsn.Path
+	}
+	o.Addr = append(o.Addr, strings.Split(addr, ",")...)
 	var (
 		secure     bool
 		params     = dsn.Query()
